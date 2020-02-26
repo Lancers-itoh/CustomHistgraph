@@ -2,7 +2,7 @@
     display: inline-block;
     width: 60px;
     height: 200px;
-    bottom: 0px;
+    bottom: 20px;
     left: 250px;
     position: absolute;
 }
@@ -11,6 +11,7 @@
     padding-top: 10px;
     height: 700px;
     background-color: white;
+    position: relative;
 }
 
 .inline_block #title{
@@ -106,6 +107,23 @@
     border-radius: 3px;
   }
   .btn-square:active {
+    /*ボタンを押したとき*/
+    -webkit-transform: translateY(4px);
+    transform: translateY(4px);/*下に動く*/
+    border-bottom: none;/*線を消す*/
+  }
+
+  .btn-square2 {
+    display: inline-block;
+    padding: 0.5em 1em;
+    width: 100px;
+    text-decoration: none;
+    background: #92ff97;
+    color:black;
+    border-bottom: solid 4px #627295;
+    border-radius: 3px;
+  }
+  .btn-square2:active {
     /*ボタンを押したとき*/
     -webkit-transform: translateY(4px);
     transform: translateY(4px);/*下に動く*/
