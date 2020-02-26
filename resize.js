@@ -31,19 +31,6 @@ function func1() {
         alert("最大数を超えています");
     }else{
         Initialization();
-        function Initialization(){
-            $moveimgs = document.getElementsByClassName('moveimg');
-            $labels = document.getElementsByClassName('label');
-            img_position = img_div_coordinate_in(3);
-            for(var i=0; i < NumberOfMoveImg; i++ ){
-                $labels[i].textContent = Data[i+1][1];
-                var Max  = MaxHeightIn[0];
-                var value = (MaxConstSize/Max) * Data[i+1][3];
-                $moveimgs[i].style = 'height:' + value +'px';
-                $img_div[i].style = 'left:' + img_position[rank_gen(3, i)] + 'px';
-                $labels[i].style = 'bottom:' + (value + 10) + 'px';
-            }
-        }
     }
 }
 
@@ -64,38 +51,31 @@ function func4() {
     MaxConstSize = parseInt(document.getElementById("input_message4").value);
     document.getElementById("input_message4").value = MaxConstSize;
     Initialization();
-    function Initialization(){
-        $moveimgs = document.getElementsByClassName('moveimg');
-        $labels = document.getElementsByClassName('label');
-        img_position = img_div_coordinate_in(3);
-        for(var i=0; i < NumberOfMoveImg; i++ ){
-            $labels[i].textContent = Data[i+1][1];
-            var Max  = MaxHeightIn[0];
-            var value = (MaxConstSize/Max) * Data[i+1][3];
-            $moveimgs[i].style = 'height:' + value +'px';
-            $img_div[i].style = 'left:' + img_position[rank_gen(3, i)] + 'px';
-            $labels[i].style = 'bottom:' + (value + 10) + 'px';
-        }
-    }
 }
 
 function func5() {
     distance_between_imgs = parseInt(document.getElementById("input_message5").value);
     document.getElementById("input_message5").value = distance_between_imgs;
     Initialization();
-    function Initialization(){
-        $moveimgs = document.getElementsByClassName('moveimg');
-        $labels = document.getElementsByClassName('label');
-        img_position = img_div_coordinate_in(3);
-        for(var i=0; i < NumberOfMoveImg; i++ ){
-            $labels[i].textContent = Data[i+1][1];
-            var Max  = MaxHeightIn[0];
-            var value = (MaxConstSize/Max) * Data[i+1][3];
-            $moveimgs[i].style = 'height:' + value +'px';
-            $img_div[i].style = 'left:' + img_position[rank_gen(3, i)] + 'px';
-            $labels[i].style = 'bottom:' + (value + 10) + 'px';
-        }
+}
+
+function Initialization(){
+    $title = document.getElementById('title');
+    $moveimgs = document.getElementsByClassName('moveimg');
+    $labels = document.getElementsByClassName('label');
+    img_position = img_div_coordinate_in(3);
+    var position;
+    for(var i=0; i < NumberOfMoveImg; i++ ){
+        $labels[i].textContent = Data[i+1][1];
+        var Max  = MaxHeightIn[0];
+        var value = (MaxConstSize/Max) * Data[i+1][3];
+        $moveimgs[i].style = 'height:' + value +'px';
+        rank = rank_gen(3, i);
+        $img_div[i].style = 'left:' + img_position[rank] + 'px';
+        $labels[i].style = 'bottom:' + (value + 10) + 'px';
     }
+    console.log(position + MaxConstSize*WperH_ratio/2 + 20 + distance_between_imgs);
+    $title.style = 'left:' + (img_position[rank] + MaxConstSize*WperH_ratio/2 + distance_between_imgs) + 'px';
 }
 
 
@@ -108,7 +88,20 @@ window.onload = function() {
         var reader = new FileReader();
         reader.readAsText( result );
         reader.addEventListener( 'load', function() {
-            var rowdata = reader.result.split('\n');
+
+            var prerowdata = reader.result.split('\n');
+            var rowdata;
+            //最終行に,がつくことがあるので除外する。
+            for(var i=0; i< prerowdata.length; i++){
+                if(prerowdata[i].split(',').length <= 1){
+                    //rowdata = rowdata.splice(rowdata.length-1);
+                    rowdata = prerowdata.slice(0, i);
+                    break;
+                }
+                if(i == prerowdata.length - 1){
+                    rowdata = prerowdata;
+                }
+            }
             var GIF_div = document.getElementById("GIF");
             var submax_size = new Array();
 
@@ -132,11 +125,12 @@ window.onload = function() {
 
             const transpose = a => a[0].map((_, c) => a.map(r => r[c]));
             var transposed_array = transpose(Data);
-            for(var i=3; i< DataEndIndex; i++){
-                value_array = transposed_array[i].splice(1).map( str => parseInt(str, 10) );
+            for(var i=3; i < DataEndIndex; i++){
+                value_array = transposed_array[i].splice(1).map( str => parseInt(str, 10) );      
                 Data_in.push(value_array);
                 MaxHeightIn.push(Math.max(...value_array));
             }
+            
 
             function CreateMoveImgGroup(i){
                 var div = document.createElement('div');
@@ -183,28 +177,80 @@ window.onload = function() {
                 }
             }, 500 ) ;
             
-            var target = document.getElementById('value');
-            var $title = document.getElementById('title');
-            var $GIF_div = document.getElementById("GIF");
+            var this_time_sort_arr = [];
+            for(var time=0; time < DataEndIndex-3; time++){
+                this_time_sort_arr[time] = Data_in[time].slice().sort(compareFunc);
+                function compareFunc(a, b) {
+                    return a - b;
+                }
+            }
+            var rank_arr = transpose(this_time_sort_arr);
+            var max_size_on_this_rank = [];
+            for(var rank=0; rank < rank_arr.length; rank++){
+                var max = Math.max(...rank_arr[rank]);
+                max_size_on_this_rank.push(max);
+            }
+            
+            a = setInterval( function() {
+                    var data_in_this_time = max_size_on_this_rank;
+                    var this_time_position = [];
+                    var left = 20;
+                    var Max = Math.max(...data_in_this_time);
+                    var enter_threshold_index = NumberOfMoveImg - number_of_frame_in; 
+                    //leftに追加する値を固定化すればいいだけ
+                    for(var i=0; i < data_in_this_time.length; i++){      
+                        if(i == enter_threshold_index){
+                            var self_value = Math.round((MaxConstSize/Max) * data_in_this_time[i]);
+                            var self_width = self_value*WperH_ratio;
+                            left = 20 + self_width/2;
+                            this_time_position.push(left);
+                        }else if( i >  enter_threshold_index){
+                            var former_value = Math.round((MaxConstSize/Max) * data_in_this_time[i-1]);
+                            console.log(data_in_this_time[i] + " former " + former_value);
+                            var former_width = former_value*WperH_ratio;
+                            var self_value = Math.round((MaxConstSize/Max) * data_in_this_time[i]);
+                            console.log(data_in_this_time[i] + " self " + self_value);
+                            var self_width = self_value*WperH_ratio;
+                            left = left + (former_width/2 + self_width/2) + distance_between_imgs;
+                            this_time_position.push(left);
+                            console.log(data_in_this_time[i] + " at " + left);
+                        }else{
+                            console.log("OUT" + data_in_this_time[i-1]);
+                            out = -200;
+                            this_time_position.push(out);
+                        }
+                    }
+                    img_position =  this_time_position;
+                    console.log(img_position);
+                    clearInterval(a);
+                }, 500)
+            
+        
+
+        
             
             /*縦横比を元に初期化*/
-            var $intervalID2 = setInterval(initialization ,500);
+            var $intervalID2 = setInterval(initialization ,600);
 
             function initialization(){
                 $moveimgs = document.getElementsByClassName('moveimg');
                 $labels = document.getElementsByClassName('label');
-                img_position = img_div_coordinate_in(3);
+                $title = document.getElementById('title');
+                var value;
+                var position;
                 for(var i=0; i < NumberOfMoveImg; i++ ){
                     $labels[i].textContent = Data[i+1][1];
                     var Max  = MaxHeightIn[0];
-                    var value = (MaxConstSize/Max) * Data[i+1][3];
+                    value = (MaxConstSize/Max) * Data[i+1][3];
                     $moveimgs[i].style = 'height:' + value +'px';
-                    $img_div[i].style = 'left:' + img_position[rank_gen(3, i)] + 'px';
+                    position = img_position[rank_gen(3, i)];
+                    $img_div[i].style = 'left:' + position + 'px';
                     $labels[i].style = 'bottom:' + (value + 10) + 'px';
                     //$labels[i].style = 'bottom:' + (max_size + 10) + 'px';
                     $targetValues[i].textContent = Data[i+1][3];
                     clearInterval( $intervalID2 );
                 }
+                $title.style = 'left:' + (position + MaxConstSize*WperH_ratio/2 + 20 + distance_between_imgs) + 'px';
             }
 
         })
@@ -277,7 +323,6 @@ function resize_play(){
             })(i);
         }
         $title.textContent = Data[0][time];
-        $title.style = "left:" + img_position[NumberOfMoveImg-1] + distance_between_imgs + "px";
 
         v = 5;
         function speed_manager_expand(i, time, $ID,v){
@@ -428,29 +473,13 @@ function rank_gen(time, array_index){
 }
 
 
-
-/*function (){
-    //各順位の最大値を出してポジションを固定化する
-    for(var time=0; time < DataEndIndex-3; time++){
-        for(var i=0; i<NumberOfMoveImg; i++){
-            Data_in[time].sort(compareFunc)[i]
-        }
-    }
-    function compareFunc(a, b) {
-        return a - b;
-    }
-}*/
-
 function img_div_coordinate_in(time){
     var this_time_position = [];
     data_in_this_time = Data_in[time-3].sort(compareFunc);
     var left = 20;
     //this_time_position.push(left);
     var Max = MaxHeightIn[time-3];
-    console.log(data_in_this_time);
     var enter_threshold_index = NumberOfMoveImg - number_of_frame_in; 
-    var first = true;
-    console.log(data_in_this_time);
     //leftに追加する値を固定化すればいいだけ
     for(var i=0; i < data_in_this_time.length; i++){      
         if(i == enter_threshold_index){
@@ -460,21 +489,16 @@ function img_div_coordinate_in(time){
             this_time_position.push(left);
         }else if( i >  enter_threshold_index){
             var former_value = Math.round((MaxConstSize/Max) * data_in_this_time[i-1]);
-            console.log(data_in_this_time[i] + " former " + former_value);
             var former_width = former_value*WperH_ratio;
             var self_value = Math.round((MaxConstSize/Max) * data_in_this_time[i]);
-            console.log(data_in_this_time[i] + " self " + self_value);
             var self_width = self_value*WperH_ratio;
             left = left + (former_width/2 + self_width/2) + distance_between_imgs;
             this_time_position.push(left);
-            console.log(data_in_this_time[i] + " at " + left);
         }else{
-            console.log("OUT" + data_in_this_time[i-1]);
             out = -200;
             this_time_position.push(out);
         }
     }
-
     //ランクインのインデックスのみを取得
 
     function compareFunc(a, b) {
@@ -483,6 +507,8 @@ function img_div_coordinate_in(time){
     console.log(this_time_position);
     return(this_time_position);
 }
+
+
 
 function disabledButtons( $disabled ) {
     $buttons = document.getElementById( "sampleButtons" ).getElementsByTagName( "button" );
@@ -507,6 +533,3 @@ function disabledButtons( $disabled ) {
         }
     });
 }*/
-
-
-
