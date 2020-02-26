@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="ja">
+    <head>
+        <meta charset="UTF-8">
+        <link rel="stylesheet" type="text/css" href="resize.css">
+        <script type="text/javascript" src="resize.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.js"></script>
+        <script src="jsgif/b64.js"></script>
+        <script src="jsgif/LZWEncoder.js"></script>
+        <script src="jsgif/NeuQuant.js"></script>
+        <script src="jsgif/GIFEncoder.js"></script>
+    </head>
+    <body>
+        <p>CSVファイルを入力</p>
+        <form name="myform">
+            <input name="myfile" id="myfile" type="file" />
+            <textarea class="textlines" name="output" cols="80" rows="10"></textarea>
+        </form>
+        
+        <hr>
+        <div id="GIF">
+                <div class="inline_block">
+                    <h2 id="title"></h2>
+                </div>
+        </div>
+        <hr>
+        <p id="sampleButtons">
+            <button onclick="resize_play();">再生</button>
+        </p>
+        <p>以下の設定は必ずCSVを読み込ませた後に行ってください</p>
+        
+        <div>
+        <section class="cp_iptxt">
+            <label class="ef">
+                <p>フレームインする画像の数</p>
+                <input type="text" id="input_message1" value=0>
+                <input class="btn-square" onclick="func1()" value="送信">
+            </label>
+        </section>
+        <section class="cp_iptxt">
+            <label class="ef">
+                <p>最大の画像サイズ(固定)</p>
+                <input type="text" id="input_message4" value=200>
+                <input class="btn-square" onclick="func4()" value="送信">
+            </label>
+        </section>
+        <section class="cp_iptxt">
+            <label class="ef">
+                <p>画像の間の間隔</p>
+                <input type="text" id="input_message5" value=20>
+                <input class="btn-square" onclick="func5()" value="送信">
+            </label>
+        </section>
+        <section class="cp_iptxt">
+            <label class="ef">
+                <p>移動速度(ms)</p>
+                <input type="text" id="input_message3" value=1000>
+                <input class="btn-square" onclick="func3()" value="送信">
+            </label>
+        </section>
+        <section class="cp_iptxt">
+            <label class="ef">
+                <p>アニメーションの停止秒数(ms)</p>
+                <input type="text" id="input_message2" value=2000>
+                <input class="btn-square" onclick="func2()" value="送信">
+            </label>
+        </section>
+    </div>
+
+        
+    </body>
+</html>
