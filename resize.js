@@ -25,6 +25,8 @@ var distance_between_imgs = 20;
 
 function func1() {
     number_of_frame_in =  parseInt(document.getElementById("input_message1").value);
+    document.getElementById("input_message1").value = number_of_frame_in;
+
     if(number_of_frame_in > NumberOfMoveImg){
         alert("最大数を超えています");
     }else{
@@ -47,10 +49,12 @@ function func1() {
 
 function func2() {
     interval_time = parseInt(document.getElementById("input_message2").value);
+    document.getElementById("input_message2").value = interval_time;
 }
 
 function func3() {
     transition_time = parseInt(document.getElementById("input_message3").value);
+    document.getElementById("input_message3").value = transition_time;
 }
 
 
@@ -58,6 +62,7 @@ function func4() {
     $moveimgs = document.getElementsByClassName('moveimg');
     $labels = document.getElementsByClassName('label');
     MaxConstSize = parseInt(document.getElementById("input_message4").value);
+    document.getElementById("input_message4").value = MaxConstSize;
     Initialization();
     function Initialization(){
         $moveimgs = document.getElementsByClassName('moveimg');
@@ -76,6 +81,7 @@ function func4() {
 
 function func5() {
     distance_between_imgs = parseInt(document.getElementById("input_message5").value);
+    document.getElementById("input_message5").value = distance_between_imgs;
     Initialization();
     function Initialization(){
         $moveimgs = document.getElementsByClassName('moveimg');
@@ -209,7 +215,6 @@ window.onload = function() {
 
 
 function resize_play(){
-    disabledButtons( true );
     disabledButtons( true );
     if(is_first_time){
         var $moveimgs = document.getElementsByClassName('moveimg');
