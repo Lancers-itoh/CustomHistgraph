@@ -93,8 +93,6 @@ function func5() {
 }
 
 
-//それぞれの時代の最大値を600pxほどでだす
-
 window.onload = function() {  
 
     var form = document.forms.myform;
@@ -212,6 +210,17 @@ window.onload = function() {
 
 function resize_play(){
     disabledButtons( true );
+    disabledButtons( true );
+    if(is_first_time){
+        var $moveimgs = document.getElementsByClassName('moveimg');
+        for(var i=0; i< $moveimgs.length; i++){
+            var classname = "img" + i;
+            $img_div[i] = document.getElementById(classname);
+            var tar_pos = window.getComputedStyle($img_div[i], null).getPropertyValue('left');
+            img_position.push(tar_pos);
+        }
+        is_first_time = false;
+    }
 
     //ここであらかじめ位置情報を記憶してるけどいらないかも
     if(is_first_time){
@@ -242,7 +251,7 @@ function resize_play(){
         var $intervalID3  =new Array();
         var speed2 = new Array();
         var Max  = MaxHeightIn[time-3];
-        var img_position = img_div_coordinate_in(time);
+        //var img_position = img_div_coordinate_in(time);
 
         //setInterval をforstatementで使うときは、変数iをクロージャでキープする( https://qiita.com/yam_ada/items/2867985bcb6b77288548 )
         
@@ -414,6 +423,19 @@ function rank_gen(time, array_index){
 }
 
 
+
+/*function (){
+    //各順位の最大値を出してポジションを固定化する
+    for(var time=0; time < DataEndIndex-3; time++){
+        for(var i=0; i<NumberOfMoveImg; i++){
+            Data_in[time].sort(compareFunc)[i]
+        }
+    }
+    function compareFunc(a, b) {
+        return a - b;
+    }
+}*/
+
 function img_div_coordinate_in(time){
     var this_time_position = [];
     data_in_this_time = Data_in[time-3].sort(compareFunc);
@@ -424,6 +446,7 @@ function img_div_coordinate_in(time){
     var enter_threshold_index = NumberOfMoveImg - number_of_frame_in; 
     var first = true;
     console.log(data_in_this_time);
+    //leftに追加する値を固定化すればいいだけ
     for(var i=0; i < data_in_this_time.length; i++){      
         if(i == enter_threshold_index){
             var self_value = Math.round((MaxConstSize/Max) * data_in_this_time[i]);
