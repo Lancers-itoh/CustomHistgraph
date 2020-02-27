@@ -19,6 +19,7 @@ const MaxHeightIn = [];
 var WperH_ratio;
 var Data_in = [];
 var distance_between_imgs = 20;
+var max_size_on_this_rank = [];
 
 
 /*const は読み取り専用の変数として宣言する*/
@@ -30,7 +31,7 @@ function func1() {
     if(number_of_frame_in > NumberOfMoveImg){
         alert("最大数を超えています");
     }else{
-        Initialization();
+        Initialization(false,NaN);
     }
 }
 
@@ -50,21 +51,55 @@ function func4() {
     $labels = document.getElementsByClassName('label');
     MaxConstSize = parseInt(document.getElementById("input_message4").value);
     document.getElementById("input_message4").value = MaxConstSize;
-    Initialization();
+    Initialization(false,NaN)
 }
 
 function func5() {
     distance_between_imgs = parseInt(document.getElementById("input_message5").value);
     document.getElementById("input_message5").value = distance_between_imgs;
-    Initialization();
+    Initialization(false,NaN);
 }
 
-function Initialization(){
+function Initialization(isfirst, $ID){
     $title = document.getElementById('title');
     $moveimgs = document.getElementsByClassName('moveimg');
     $labels = document.getElementsByClassName('label');
-    img_position = img_div_coordinate_in(3);
-    var position;
+    //img_position = img_div_coordinate_in(3);
+    var this_time_sort_arr = [];
+    var height_as_px = [];
+    for(var time=0; time < DataEndIndex-3; time++){
+            //this_time_sort_arr[time] = Data_in[time].slice().sort(compareFunc);
+        var this_time_sort_arr = Data_in[time].slice().sort(compareFunc);
+        var max_on_this_arr = Math.max(...this_time_sort_arr);
+        var tmp_arr = [];
+        for(var i=0; i <NumberOfMoveImg; i++){
+                value = Math.round((MaxConstSize/max_on_this_arr) * this_time_sort_arr[i]);
+                tmp_arr.push(value);
+        }
+        height_as_px.push(tmp_arr);
+        function compareFunc(a, b) {
+            return a - b;
+        }
+    }
+    max_size_on_this_rank = [];
+    const transpose = a => a[0].map((_, c) => a.map(r => r[c]));
+    var rank_arr = transpose(height_as_px);
+    for(var rank=0; rank < rank_arr.length; rank++){
+        var max = Math.max(...rank_arr[rank]);
+        max_size_on_this_rank.push(max);
+    }
+
+    img_position = img_div_coordinate_like(max_size_on_this_rank, false, NaN)
+    //$title.style = "top:" + title_pos + 'px';
+    tmp = img_position.filter(item => item > 0)[0];
+    tmp2 = img_position.indexOf(tmp);
+    pos = max_size_on_this_rank[tmp2];
+    title_height = 210 + pos;
+    if(title_height > 630){
+        title_height = 630;
+        console.log("Max");
+    }
+    $title.style = "bottom:" + title_height + 'px';
     for(var i=0; i < NumberOfMoveImg; i++ ){
         $labels[i].textContent = Data[i+1][1];
         var Max  = MaxHeightIn[0];
@@ -74,8 +109,44 @@ function Initialization(){
         $img_div[i].style = 'left:' + img_position[rank] + 'px';
         $labels[i].style = 'bottom:' + (value + 10) + 'px';
     }
-    console.log(position + MaxConstSize*WperH_ratio/2 + 20 + distance_between_imgs);
-    $title.style = 'left:' + (img_position[rank] + MaxConstSize*WperH_ratio/2 + distance_between_imgs) + 'px';
+    if(isfirst){
+        clearInterval($ID)
+    }
+}
+
+function img_div_coordinate_like(data_in_this_time, isfirst, $ID){
+    var this_time_position = [];
+    var left = 20;
+    var Max = Math.max(...data_in_this_time);
+    var enter_threshold_index = NumberOfMoveImg - number_of_frame_in; 
+    //leftに追加する値を固定化すればいいだけ
+    console.log(enter_threshold_index);
+    for(var i=0; i < data_in_this_time.length; i++){      
+        if(i == enter_threshold_index){
+            var self_value = Math.round((MaxConstSize/Max) * data_in_this_time[i]);
+            var self_width = self_value*WperH_ratio;
+            left = 20 + self_width/2;
+            this_time_position.push(left);
+        }else if( i >  enter_threshold_index){
+            var former_value = Math.round((MaxConstSize/Max) * data_in_this_time[i-1]);
+            var former_width = former_value*WperH_ratio;
+            var self_value = Math.round((MaxConstSize/Max) * data_in_this_time[i]);
+            var self_width = self_value*WperH_ratio;
+            left = left + (former_width/2 + self_width/2) + distance_between_imgs;
+            this_time_position.push(left);
+        }else{
+            out = -(200 + MaxConstSize*WperH_ratio);
+            this_time_position.push(out);
+        }
+    }
+    img_position =  this_time_position;
+    console.log("###");
+    console.log(img_position);
+    if(isfirst){
+        clearInterval($ID)
+    }else{
+        return(img_position);
+    }
 }
 
 
@@ -156,10 +227,7 @@ window.onload = function() {
             }
             /*とりあえず作って、座標をフレームアウトさせる*/
 
-        
-            var $labels = document.getElementsByClassName('label');
             var $moveimgs = document.getElementsByTagName('img');
-            var $targetValues = document.getElementsByClassName('value');
             for(var i=0; i< $moveimgs.length; i++){
                 var classname = "img" + i;
                 $img_div[i] = document.getElementById(classname);
@@ -176,82 +244,11 @@ window.onload = function() {
                     clearInterval( intervalId ) ;
                 }
             }, 500 ) ;
-            
-            var this_time_sort_arr = [];
-            for(var time=0; time < DataEndIndex-3; time++){
-                this_time_sort_arr[time] = Data_in[time].slice().sort(compareFunc);
-                function compareFunc(a, b) {
-                    return a - b;
-                }
-            }
-            var rank_arr = transpose(this_time_sort_arr);
-            var max_size_on_this_rank = [];
-            for(var rank=0; rank < rank_arr.length; rank++){
-                var max = Math.max(...rank_arr[rank]);
-                max_size_on_this_rank.push(max);
-            }
-            
-            a = setInterval( function() {
-                    var data_in_this_time = max_size_on_this_rank;
-                    var this_time_position = [];
-                    var left = 20;
-                    var Max = Math.max(...data_in_this_time);
-                    var enter_threshold_index = NumberOfMoveImg - number_of_frame_in; 
-                    //leftに追加する値を固定化すればいいだけ
-                    for(var i=0; i < data_in_this_time.length; i++){      
-                        if(i == enter_threshold_index){
-                            var self_value = Math.round((MaxConstSize/Max) * data_in_this_time[i]);
-                            var self_width = self_value*WperH_ratio;
-                            left = 20 + self_width/2;
-                            this_time_position.push(left);
-                        }else if( i >  enter_threshold_index){
-                            var former_value = Math.round((MaxConstSize/Max) * data_in_this_time[i-1]);
-                            console.log(data_in_this_time[i] + " former " + former_value);
-                            var former_width = former_value*WperH_ratio;
-                            var self_value = Math.round((MaxConstSize/Max) * data_in_this_time[i]);
-                            console.log(data_in_this_time[i] + " self " + self_value);
-                            var self_width = self_value*WperH_ratio;
-                            left = left + (former_width/2 + self_width/2) + distance_between_imgs;
-                            this_time_position.push(left);
-                            console.log(data_in_this_time[i] + " at " + left);
-                        }else{
-                            console.log("OUT" + data_in_this_time[i-1]);
-                            out = -200;
-                            this_time_position.push(out);
-                        }
-                    }
-                    img_position =  this_time_position;
-                    console.log(img_position);
-                    clearInterval(a);
-                }, 500)
-            
-        
-
-        
-            
+             
+            /*初期位置生成*/
+            var a = setInterval( function() {img_div_coordinate_like(max_size_on_this_rank, true, a)}, 500)
             /*縦横比を元に初期化*/
-            var $intervalID2 = setInterval(initialization ,600);
-
-            function initialization(){
-                $moveimgs = document.getElementsByClassName('moveimg');
-                $labels = document.getElementsByClassName('label');
-                $title = document.getElementById('title');
-                var value;
-                var position;
-                for(var i=0; i < NumberOfMoveImg; i++ ){
-                    $labels[i].textContent = Data[i+1][1];
-                    var Max  = MaxHeightIn[0];
-                    value = (MaxConstSize/Max) * Data[i+1][3];
-                    $moveimgs[i].style = 'height:' + value +'px';
-                    position = img_position[rank_gen(3, i)];
-                    $img_div[i].style = 'left:' + position + 'px';
-                    $labels[i].style = 'bottom:' + (value + 10) + 'px';
-                    //$labels[i].style = 'bottom:' + (max_size + 10) + 'px';
-                    $targetValues[i].textContent = Data[i+1][3];
-                    clearInterval( $intervalID2 );
-                }
-                $title.style = 'left:' + (position + MaxConstSize*WperH_ratio/2 + 20 + distance_between_imgs) + 'px';
-            }
+            var $intervalID2 = setInterval(function(){Initialization(true, $intervalID2)} ,600);
 
         })
     })
@@ -297,9 +294,7 @@ function resize_play(){
 
     function animation(time){
         var $intervalID  =new Array();
-        var speed = new Array();
         var $intervalID2  =new Array();
-        var $intervalID3  =new Array();
         var speed2 = new Array();
         var Max  = MaxHeightIn[time-3];
         //var img_position = img_div_coordinate_in(time);
@@ -307,8 +302,6 @@ function resize_play(){
         //setInterval をforstatementで使うときは、変数iをクロージャでキープする( https://qiita.com/yam_ada/items/2867985bcb6b77288548 )
         
         for(var i=0; i < NumberOfMoveImg; i++){
-            //speed[i] = speed_calc_expand(i, time);
-            //speed[i] = 10;
             /*setintervalを呼び出す間隔は一定にして、速度はvで調整する*/
              speed2 = 1;
              speed1 = 1;
@@ -317,9 +310,6 @@ function resize_play(){
             })(i);
             (function(index) {
                 $intervalID2[index] = setInterval(function(){speed_manager_location(index, time, $intervalID2[index])},speed2);
-            })(i);
-            (function(index) {
-                $intervalID3[index] = setInterval(function(){rewrite(index, time, $intervalID3[index])},100);
             })(i);
         }
         $title.textContent = Data[0][time];
@@ -339,7 +329,7 @@ function resize_play(){
                             $targetElements[i].style.height = height + 'px';
                             newheight =  parseInt($targetElements[i].style.height)+ 10;
                             $labels[i].style = 'bottom:' + newheight +'px';
-                            //$targetValues[i].textContent = Math.round(height*Max/MaxConstSize);
+                            $targetValues[i].textContent = Math.round(height*Max/MaxConstSize);
                         break;
                     case false :
                         if((height - value) <= v){
@@ -350,8 +340,24 @@ function resize_play(){
                         $targetElements[i].style.height = height + 'px';
                         newheight =  parseInt($targetElements[i].style.height)+ 10;
                         $labels[i].style = 'bottom:' + newheight +'px';
-                        //$targetValues[i].textContent = Math.round(height*Max/MaxConstSize);
+                        $targetValues[i].textContent = Math.round(height*Max/MaxConstSize);
                         break;
+                }
+            }else if(parseInt($targetValues[i].textContent) >  Data[i+1][time]){
+                value = parseInt($targetValues[i].textContent);
+                if(value  > Data[i+1][time]){
+                    switch(value > Data[i+1][time] ){
+                        case true:
+                            value = value - 1;
+                            $targetValues[i].textContent = value;
+                            console.log("minus;" + value + " of " +Data[i+1][1] + " in " +time);
+                            break;
+                        case false:
+                            value = value + 1;
+                            $targetValues[i].textContent = ++value;
+                            console.log("plus;" + value + " of " +Data[i+1][1] + " in " +time);
+                            break;
+                    }
                 }
             }else{    
                 $targetValues[i].textContent = Math.round(height*Max/MaxConstSize);
@@ -388,47 +394,12 @@ function resize_play(){
                 clearInterval($ID);
             }
         }
-
-        function rewrite(i, time, $ID){
-            value = parseInt($targetValues[i].textContent);
-            if(value  > Data[i+1][time]){
-                switch(value > Data[i+1][time] ){
-                    case true:
-                        $targetValues[i].textContent = value--;
-                        break;
-                    case false:
-                        $targetValues[i].textContent = value++;
-                        break;
-                }
-            }else{
-                clearInterval($ID);
-            }
-        }
-
         
-        function speed_calc_expand(i, time){
-            var Max  = MaxHeightIn[time-3];
-            var value = Math.round((MaxConstSize/Max) * Data[i+1][time]);
-            var height = parseInt($targetElements[i].style.height);
-            var speed;
-            if(Math.abs(value - height) != 0){
-                speed = Math.abs(value - height)/transition_time;
-            }
-            if(speed >= transition_time*0.8){
-                speed  = transition_time*0.6;
-            }
-            return(Math.round(speed));
-        }
     }
-
-
-
     disabledButtons( false );
 }
 
 function rank_gen(time, array_index){
-
-    //その年代における最適な座標を割り出す。
 
     var csv_array = new Array();
     var csv_array_former = new Array();
@@ -442,7 +413,6 @@ function rank_gen(time, array_index){
 
     var reference_value = csv_array[array_index];
     var sort_array = csv_array.slice().sort(compareFunc);
-    var former_sort_array = csv_array_former.slice().sort(compareFunc);
 
      //重複するデータを抽出
      //それに一致するデータは２つの可能性を提示　位置が近い方を採用
@@ -472,64 +442,9 @@ function rank_gen(time, array_index){
        return(result);
 }
 
-
-function img_div_coordinate_in(time){
-    var this_time_position = [];
-    data_in_this_time = Data_in[time-3].sort(compareFunc);
-    var left = 20;
-    //this_time_position.push(left);
-    var Max = MaxHeightIn[time-3];
-    var enter_threshold_index = NumberOfMoveImg - number_of_frame_in; 
-    //leftに追加する値を固定化すればいいだけ
-    for(var i=0; i < data_in_this_time.length; i++){      
-        if(i == enter_threshold_index){
-            var self_value = Math.round((MaxConstSize/Max) * data_in_this_time[i]);
-            var self_width = self_value*WperH_ratio;
-            left = 20 + self_width/2;
-            this_time_position.push(left);
-        }else if( i >  enter_threshold_index){
-            var former_value = Math.round((MaxConstSize/Max) * data_in_this_time[i-1]);
-            var former_width = former_value*WperH_ratio;
-            var self_value = Math.round((MaxConstSize/Max) * data_in_this_time[i]);
-            var self_width = self_value*WperH_ratio;
-            left = left + (former_width/2 + self_width/2) + distance_between_imgs;
-            this_time_position.push(left);
-        }else{
-            out = -200;
-            this_time_position.push(out);
-        }
-    }
-    //ランクインのインデックスのみを取得
-
-    function compareFunc(a, b) {
-        return a - b;
-    }
-    console.log(this_time_position);
-    return(this_time_position);
-}
-
-
-
 function disabledButtons( $disabled ) {
     $buttons = document.getElementById( "sampleButtons" ).getElementsByTagName( "button" );
     for( var $i = 0; $i < $buttons.length; $i++ ) {
         $buttons[$i].disabled = $disabled;
     }
 }
-
-/*window.onload = function(){
-    var target = document.getElementById("GIF");
-    var folder = document.getElementById("folder")
-    var img1 = document.createElement('img');
-    folder.appendChild(img1);
-      //ボタンを押下した際にダウンロードする画像を作る
-      html2canvas(target,{
-        onrendered: function(canvas){
-          //aタグのhrefにキャプチャ画像のURLを設定
-          var imgData = canvas.toDataURL();
-          //var img_folder = document.getElementById('img_folder1');
-          img1.src = imgData;
-          console.log(imgData);
-        }
-    });
-}*/

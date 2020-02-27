@@ -14,10 +14,9 @@
     position: relative;
 }
 
-.inline_block #title{
+#title{
     position: absolute;
-    left: 460px;
-    bottom: 0px;
+    left: 20px;
 }
 
 .inline_block img{
