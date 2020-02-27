@@ -1,6 +1,7 @@
 .inline_block{
+    /*inline_block の幅を調整することで二行目にする文字を決められる*/
     display: inline-block;
-    width: 60px;
+    width: 120px;
     height: 200px;
     bottom: 20px;
     left: 250px;
@@ -32,10 +33,13 @@
     /*text以外にtext-align: center は聞かないので以下のようにして調整する*/
     position: absolute;
     left: 50%;
+    width: 100%;
+    text-align: center;
     -webkit-transform : translate(-50%);
     transform : translate(-50%);
     /*top: 10%;*/
     bottom: 55px;
+    writing-mode: horizontal-tb;
 }
 .inline_block .value{
     position: absolute;

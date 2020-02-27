@@ -6,8 +6,9 @@ var DataEndIndex;
 var year_group = new Array();
 var img_position = new Array();
 var $img_div = new Array ();
+var img_div_width = 120;
 var $moveimgs;
-var number_of_frame_in = 10;
+var number_of_frame_in;
 let interval_time = 2000;
 let transition_time = 1000;
 let MaxConstSize = 200;
@@ -59,6 +60,7 @@ function func5() {
     document.getElementById("input_message5").value = distance_between_imgs;
     Initialization(false,NaN);
 }
+
 
 function Initialization(isfirst, $ID){
     $title = document.getElementById('title');
@@ -120,18 +122,28 @@ function img_div_coordinate_like(data_in_this_time, isfirst, $ID){
     var Max = Math.max(...data_in_this_time);
     var enter_threshold_index = NumberOfMoveImg - number_of_frame_in; 
     //leftに追加する値を固定化すればいいだけ
+    //width < img_div_width 画像幅がimg_div_widthより小さい場合無条件でsize = img_div_widthとなる*/
     console.log(enter_threshold_index);
     for(var i=0; i < data_in_this_time.length; i++){      
         if(i == enter_threshold_index){
             var self_value = Math.round((MaxConstSize/Max) * data_in_this_time[i]);
             var self_width = self_value*WperH_ratio;
+            if(self_width < img_div_width){
+                self_width = img_div_width;
+            }
             left = 20 + self_width/2;
             this_time_position.push(left);
         }else if( i >  enter_threshold_index){
             var former_value = Math.round((MaxConstSize/Max) * data_in_this_time[i-1]);
             var former_width = former_value*WperH_ratio;
+            if(former_width < img_div_width){
+                former_width = img_div_width;
+            }
             var self_value = Math.round((MaxConstSize/Max) * data_in_this_time[i]);
             var self_width = self_value*WperH_ratio;
+            if(self_width < img_div_width){
+                self_width = img_div_width;
+            }
             left = left + (former_width/2 + self_width/2) + distance_between_imgs;
             this_time_position.push(left);
         }else{
@@ -160,7 +172,7 @@ window.onload = function() {
         reader.readAsText( result );
         reader.addEventListener( 'load', function() {
 
-            var prerowdata = reader.result.split('\n');
+            var prerowdata = reader.result.split('\r\n');
             var rowdata;
             //最終行に,がつくことがあるので除外する。
             for(var i=0; i< prerowdata.length; i++){
@@ -192,7 +204,7 @@ window.onload = function() {
             //アニメーションで表示される画像の数 ヘッダ分の１つを除外している。
             DataEndIndex = Data[0].length;
             //アニメーションで表示される画像の数 ヘッダ分の１つを除外している。
-
+            number_of_frame_in = NumberOfMoveImg;
 
             const transpose = a => a[0].map((_, c) => a.map(r => r[c]));
             var transposed_array = transpose(Data);
