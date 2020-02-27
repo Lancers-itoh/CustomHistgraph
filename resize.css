@@ -129,6 +129,24 @@
     border-bottom: none;/*線を消す*/
   }
 
+  .btn-square3 {
+    display: inline-block;
+    padding: 0.5em 1em;
+    width: 400px;
+    height: 60px;
+    text-decoration: none;
+    background: #92ff97;
+    color:black;
+    border-bottom: solid 4px #627295;
+    border-radius: 3px;
+  }
+  .btn-square3:active {
+    /*ボタンを押したとき*/
+    -webkit-transform: translateY(4px);
+    transform: translateY(4px);/*下に動く*/
+    border-bottom: none;/*線を消す*/
+  }
+
   
 .ef input[type='text']:focus {
 	border: 1px solid #da3c41;
