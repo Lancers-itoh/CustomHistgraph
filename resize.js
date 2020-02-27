@@ -318,7 +318,11 @@ function resize_play(){
         function speed_manager_expand(i, time, $ID,v){
             var value = Math.round((MaxConstSize/Max) * Data[i+1][time]);
             var height = parseInt($targetElements[i].style.height);
+            var textvalue = parseInt($targetValues[i].textContent);
             if(height != value){
+                if(i == 5){
+                    console.log("EXPAND")
+                }
                 switch(height > value){
                     case true :
                             if((height - value) >= v){
@@ -343,27 +347,34 @@ function resize_play(){
                         $targetValues[i].textContent = Math.round(height*Max/MaxConstSize);
                         break;
                 }
-            }else if(parseInt($targetValues[i].textContent) >  Data[i+1][time]){
-                value = parseInt($targetValues[i].textContent);
-                if(value  > Data[i+1][time]){
-                    switch(value > Data[i+1][time] ){
-                        case true:
-                            value = value - 1;
-                            $targetValues[i].textContent = value;
-                            console.log("minus;" + value + " of " +Data[i+1][1] + " in " +time);
-                            break;
-                        case false:
-                            value = value + 1;
-                            $targetValues[i].textContent = ++value;
-                            console.log("plus;" + value + " of " +Data[i+1][1] + " in " +time);
-                            break;
-                    }
-                }
             }else{    
-                $targetValues[i].textContent = Math.round(height*Max/MaxConstSize);
+                if(i == 5){
+                    console.log("END")
+                }
+                $targetValues[i].textContent = Data[i+1][time];
                 clearInterval($ID);
             }
         }
+
+        /*else if(textvalue !=  Data[i+1][time]){
+                if(i == 5){
+                    console.log("INCREMENT")
+                }
+                if(textvalue  > Data[i+1][time]){
+                    switch(textvalue > Data[i+1][time] ){
+                        case true:
+                            textvalue = textvalue - 1;
+                            $targetValues[i].textContent = textvalue;
+                            //console.log("minus;" + textvalue + " of " +Data[i+1][1] + " in " +time);
+                            break;
+                        case false:
+                            textvalue = textvalue + 1;
+                            $targetValues[i].textContent = textvalue;
+                            //console.log("plus;" + textvalue + " of " +Data[i+1][1] + " in " +time);
+                            break;
+                    }
+                }
+            }*/
 
 
     /*速さ*/
