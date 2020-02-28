@@ -68,6 +68,7 @@ function Initialization(isfirst, $ID){
     $title = document.getElementById('title');
     $moveimgs = document.getElementsByClassName('moveimg');
     $labels = document.getElementsByClassName('label');
+    $values = document.getElementsByClassName('value');
     //img_position = img_div_coordinate_in(3);
     var this_time_sort_arr = [];
     var height_as_px = [];
@@ -111,7 +112,7 @@ function Initialization(isfirst, $ID){
         $moveimgs[i].style = 'height:' + value +'px';
         rank = rank_gen(3, i);
         $img_div[i].style = 'left:' + img_position[rank] + 'px';
-        $labels[i].style = 'bottom:' + (value + 10) + 'px';
+        $values[i].style = 'bottom:' + (value + 10) + 'px';
     }
     if(isfirst){
         clearInterval($ID);
@@ -222,15 +223,17 @@ window.onload = function() {
                 div.className = 'inline_block';
                 div.id = ("img" + i);
                 var p1 = document.createElement('p');
-                p1.className = "label";
-                p1.textContent = Data[i+1][1];
+                //p1.className = "label";
+                p1.className = "value";
+                p1.textContent = Data[i+1][4];
                 var img = document.createElement('img');
                 img.src = Data[i+1][0];
                 img.style = "height: 45px;" ;
                 img.className = 'moveimg ' + Data[i+1][2];
                 var p2 = document.createElement('p');
-                p2.className = "value";
-                p2.textContent = Data[i+1][4];
+                //p2.className = "value";
+                p2.className = "label";
+                p2.textContent = Data[i+1][1];
                 div.appendChild(p1);
                 div.appendChild(img);
                 div.appendChild(p2);
@@ -346,7 +349,7 @@ function resize_play(){
                             }
                             $targetElements[i].style.height = height + 'px';
                             newheight =  parseInt($targetElements[i].style.height)+ 10;
-                            $labels[i].style = 'bottom:' + newheight +'px';
+                            $targetValues[i].style = 'bottom:' + newheight +'px';
                             $targetValues[i].textContent = Math.round(height*Max/MaxConstSize);
                         break;
                     case false :
@@ -357,7 +360,7 @@ function resize_play(){
                         }
                         $targetElements[i].style.height = height + 'px';
                         newheight =  parseInt($targetElements[i].style.height)+ 10;
-                        $labels[i].style = 'bottom:' + newheight +'px';
+                        $targetValues[i].style = 'bottom:' + newheight +'px';
                         $targetValues[i].textContent = Math.round(height*Max/MaxConstSize);
                         break;
                 }
@@ -369,28 +372,7 @@ function resize_play(){
                 clearInterval($ID);
             }
         }
-
-        /*else if(textvalue !=  Data[i+1][time]){
-                if(i == 5){
-                    console.log("INCREMENT")
-                }
-                if(textvalue  > Data[i+1][time]){
-                    switch(textvalue > Data[i+1][time] ){
-                        case true:
-                            textvalue = textvalue - 1;
-                            $targetValues[i].textContent = textvalue;
-                            //console.log("minus;" + textvalue + " of " +Data[i+1][1] + " in " +time);
-                            break;
-                        case false:
-                            textvalue = textvalue + 1;
-                            $targetValues[i].textContent = textvalue;
-                            //console.log("plus;" + textvalue + " of " +Data[i+1][1] + " in " +time);
-                            break;
-                    }
-                }
-            }*/
-
-
+  
     /*速さ*/
         
         function speed_manager_location(i, time, $ID){
