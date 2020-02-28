@@ -33,8 +33,6 @@
     /*text以外にtext-align: center は聞かないので以下のようにして調整する*/
     position: absolute;
     left: 50%;
-    width: 100%;
-    text-align: center;
     -webkit-transform : translate(-50%);
     transform : translate(-50%);
     /*top: 10%;*/
@@ -44,6 +42,8 @@
 .inline_block .label{
     position: absolute;
     left: 50%;
+    width: 100%;
+    text-align: center;
     -webkit-transform : translate(-50%);
     transform : translate(-50%);
     top: 180px;
