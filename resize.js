@@ -100,8 +100,8 @@ function Initialization(isfirst, $ID){
     tmp2 = img_position.indexOf(tmp);
     pos = max_size_on_this_rank[tmp2];
     title_height = 210 + pos;
-    if(title_height > 630){
-        title_height = 630;
+    if(title_height > 730){
+        title_height = 730;
         console.log("Max");
     }
     $title.style = "bottom:" + title_height + 'px';
