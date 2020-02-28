@@ -1,5 +1,7 @@
 //配列宣言などは関数の外でも可能だが、documentから要素を取得するには、イベントバンドラを利用しHTML側から呼び出す必要がある。
 //関数の中で要素を取得する、あるいは、window.onload で取得。
+
+
 var Data = new Array();
 var NumberOfMoveImg;
 var DataEndIndex;
@@ -52,7 +54,7 @@ function func4() {
     $labels = document.getElementsByClassName('label');
     MaxConstSize = parseInt(document.getElementById("input_message4").value);
     document.getElementById("input_message4").value = MaxConstSize;
-    Initialization(false,NaN)
+    Initialization(false,NaN);
 }
 
 function func5() {
@@ -112,7 +114,7 @@ function Initialization(isfirst, $ID){
         $labels[i].style = 'bottom:' + (value + 10) + 'px';
     }
     if(isfirst){
-        clearInterval($ID)
+        clearInterval($ID);
     }
 }
 
@@ -155,7 +157,7 @@ function img_div_coordinate_like(data_in_this_time, isfirst, $ID){
     console.log("###");
     console.log(img_position);
     if(isfirst){
-        clearInterval($ID)
+        clearInterval($ID);
     }else{
         return(img_position);
     }
@@ -169,7 +171,7 @@ window.onload = function() {
     form.myfile.addEventListener( 'change', function(e) {
         var result = e.target.files[0];
         var reader = new FileReader();
-        reader.readAsText( result );
+        reader.readAsText( result, 'shift-jis' );
         reader.addEventListener( 'load', function() {
 
             var prerowdata = reader.result.split('\r\n');
@@ -258,7 +260,7 @@ window.onload = function() {
             }, 500 ) ;
              
             /*初期位置生成*/
-            var a = setInterval( function() {img_div_coordinate_like(max_size_on_this_rank, true, a)}, 500)
+            var a = setInterval( function() {img_div_coordinate_like(max_size_on_this_rank, true, a)}, 500);
             /*縦横比を元に初期化*/
             var $intervalID2 = setInterval(function(){Initialization(true, $intervalID2)} ,600);
 
@@ -301,7 +303,7 @@ function resize_play(){
     
     
     for(var k=3; k < (DataEndIndex); k++){
-        setTimeout(animation, (transition_time + interval_time)*(k-3), k)
+        setTimeout(animation, (transition_time + interval_time)*(k-3), k);
     }
 
     function animation(time){
@@ -361,7 +363,7 @@ function resize_play(){
                 }
             }else{    
                 if(i == 5){
-                    console.log("END")
+                    console.log("END");
                 }
                 $targetValues[i].textContent = Data[i+1][time];
                 clearInterval($ID);
