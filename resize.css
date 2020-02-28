@@ -3,14 +3,14 @@
     display: inline-block;
     width: 120px;
     height: 200px;
-    bottom: 20px;
+    bottom: 120px;
     left: 250px;
     position: absolute;
 }
 
 #GIF{
     padding-top: 10px;
-    height: 700px;
+    height: 800px;
     background-color: white;
     position: relative;
 }
