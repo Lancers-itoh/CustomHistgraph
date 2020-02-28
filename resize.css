@@ -1,7 +1,7 @@
 .inline_block{
     /*inline_block の幅を調整することで二行目にする文字を決められる*/
     display: inline-block;
-    width: 120px;
+    width: 160px;
     height: 200px;
     bottom: 120px;
     left: 250px;
@@ -38,6 +38,7 @@
     /*top: 10%;*/
     bottom: 55px;
     writing-mode: horizontal-tb;
+    font-size: 30px;
 }
 .inline_block .label{
     position: absolute;
@@ -47,6 +48,7 @@
     -webkit-transform : translate(-50%);
     transform : translate(-50%);
     top: 180px;
+    font-size: 30px;
 }
 
 

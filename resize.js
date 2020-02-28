@@ -8,7 +8,7 @@ var DataEndIndex;
 var year_group = new Array();
 var img_position = new Array();
 var $img_div = new Array ();
-var img_div_width = 120;
+var img_div_width = 160;
 var $moveimgs;
 var number_of_frame_in;
 let interval_time = 2000;
@@ -60,7 +60,7 @@ function func4() {
 function func5() {
     distance_between_imgs = parseInt(document.getElementById("input_message5").value);
     document.getElementById("input_message5").value = distance_between_imgs;
-    Initialization(false,NaN);
+    Initialization(false,NaN)
 }
 
 
@@ -113,6 +113,7 @@ function Initialization(isfirst, $ID){
         rank = rank_gen(3, i);
         $img_div[i].style = 'left:' + img_position[rank] + 'px';
         $values[i].style = 'bottom:' + (value + 10) + 'px';
+        console.log($values[i].style);
     }
     if(isfirst){
         clearInterval($ID);
@@ -173,6 +174,7 @@ window.onload = function() {
         var result = e.target.files[0];
         var reader = new FileReader();
         reader.readAsText( result, 'shift-jis' );
+        //reader.readAsText( result);
         reader.addEventListener( 'load', function() {
 
             var prerowdata = reader.result.split('\r\n');
