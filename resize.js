@@ -99,7 +99,7 @@ function Initialization(isfirst, $ID){
     tmp = img_position.filter(item => item > 0)[0];
     tmp2 = img_position.indexOf(tmp);
     pos = max_size_on_this_rank[tmp2];
-    title_height = 210 + pos;
+    title_height = 410 + pos;
     if(title_height > 730){
         title_height = 730;
         console.log("Max");
